@@ -1,6 +1,6 @@
 package com.devtiro.quickstart.services;
 
-import com.devtiro.quickstart.model.Personal;
+import com.devtiro.quickstart.entity.Personal;
 import com.devtiro.quickstart.repository.PersonalRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

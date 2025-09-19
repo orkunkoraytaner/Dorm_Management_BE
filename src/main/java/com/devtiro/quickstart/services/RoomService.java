@@ -1,6 +1,6 @@
 package com.devtiro.quickstart.services;
 
-import com.devtiro.quickstart.model.Room;
+import com.devtiro.quickstart.entity.Room;
 import com.devtiro.quickstart.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

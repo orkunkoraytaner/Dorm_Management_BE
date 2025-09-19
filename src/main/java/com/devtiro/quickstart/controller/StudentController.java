@@ -1,7 +1,7 @@
 package com.devtiro.quickstart.controller;
 
 
-import com.devtiro.quickstart.model.Student;
+import com.devtiro.quickstart.entity.Student;
 import com.devtiro.quickstart.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +34,6 @@ public class StudentController {
     public Student updateStudent(@PathVariable Long id, @RequestBody Student student) {
         return studentService.updateStudent(id, student);
     }
-
     @DeleteMapping("/{id}")
     public void deleteStudent(@PathVariable Long id) {
         studentService.deleteStudent(id);

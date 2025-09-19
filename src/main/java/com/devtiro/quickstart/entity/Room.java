@@ -1,5 +1,6 @@
-package com.devtiro.quickstart.model;
+package com.devtiro.quickstart.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -16,6 +17,10 @@ public class Room {
 
     @OneToMany(mappedBy = "room")
     private List<Student> students;
+
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<MaintenanceTicket> maintenanceTickets;
 
     public Long getId() {
         return id;

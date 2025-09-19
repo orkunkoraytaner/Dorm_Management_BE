@@ -1,11 +1,11 @@
 package com.devtiro.quickstart.services;
 
-import com.devtiro.quickstart.model.Student;
+import com.devtiro.quickstart.entity.Student;
 import com.devtiro.quickstart.repository.StudentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 

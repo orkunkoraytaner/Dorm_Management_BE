@@ -1,4 +1,4 @@
-package com.devtiro.quickstart.model;
+package com.devtiro.quickstart.entity;
 
 import jakarta.persistence.*;
 
@@ -17,7 +17,7 @@ public class Roles {
     @ManyToMany(mappedBy = "roles")
     private Set<Student> students = new HashSet<>();
 
-    @ManyToMany(mappedBy = "personals")
+    @ManyToMany(mappedBy = "roles")
     private Set<Personal> personals = new HashSet<>();
 
 
