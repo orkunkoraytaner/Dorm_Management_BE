@@ -40,5 +40,5 @@ public class PersonalController {
         personalService.deletePersonal(id);
     }
 
-
+    //test
 }
