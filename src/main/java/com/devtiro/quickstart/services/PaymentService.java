@@ -18,13 +18,15 @@ public class PaymentService {
 
     private PaymentRepository paymentRepository;
     private StudentRepository studentRepository;
+    private final ActivityLogService activityLogService;
     private final Logger logger = LoggerFactory.getLogger(PaymentService.class);
 
     @Autowired
-    public PaymentService(PaymentRepository paymentRepository, StudentRepository studentRepository)
+    public PaymentService(PaymentRepository paymentRepository, StudentRepository studentRepository, ActivityLogService activityLogService)
     {
         this.paymentRepository = paymentRepository;
         this.studentRepository = studentRepository;
+        this.activityLogService = activityLogService;
     }
 
     public List<Payment> getAllPaymentForStudent(Long studentId)
@@ -38,16 +40,18 @@ public class PaymentService {
         if(studentOptional.isPresent())
         {
             payment.setStudent(studentOptional.get());
+            activityLogService.addActivity(studentId,payment.toString());
             return Optional.of(paymentRepository.save(payment));
         }
         return Optional.empty();
     }
 
-
     public void deletePayment(Long paymentId)
     {
         paymentRepository.deleteById(paymentId);
     }
+
+
 
 
 

@@ -24,6 +24,11 @@ public class MaintenanceTicket {
     @JsonBackReference
     private Room room;
 
+    @ManyToOne
+    @JoinColumn(name = "student_id")
+    @JsonBackReference
+    private Student reportingStudent;
+
     public MaintenanceTicket() {}
 
     public MaintenanceTicket(String description, Room room) {
@@ -71,5 +76,13 @@ public class MaintenanceTicket {
 
     public void setRoom(Room room) {
         this.room = room;
+    }
+
+    public Student getReportingStudent() {
+        return reportingStudent;
+    }
+
+    public void setReportingStudent(Student reportingStudent) {
+        this.reportingStudent = reportingStudent;
     }
 }

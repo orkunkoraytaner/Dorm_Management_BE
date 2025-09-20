@@ -27,6 +27,10 @@ public class Student extends Person {
     @JsonManagedReference
     private List<Payment> payments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "reportingStudent")
+    @JsonManagedReference
+    private List<MaintenanceTicket> tickets = new ArrayList<>();
+
     public Student() {}
 
     public Student(String firstname, String lastname, String email, String department, int deskNumber) {

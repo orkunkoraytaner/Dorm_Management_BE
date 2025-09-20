@@ -14,6 +14,7 @@ public class Room {
     private int roomNumber;
     private int capacity;
     private int floor;
+    private int emptySpace;
 
     @OneToMany(mappedBy = "room")
     private List<Student> students;
@@ -54,4 +55,11 @@ public class Room {
         this.floor = floor;
     }
 
+    public int getEmptySpace() {
+        return emptySpace;
+    }
+
+    public void setEmptySpace(int emptySpace) {
+        this.emptySpace = emptySpace;
+    }
 }
