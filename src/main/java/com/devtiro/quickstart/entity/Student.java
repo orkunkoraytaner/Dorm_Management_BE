@@ -1,12 +1,10 @@
 package com.devtiro.quickstart.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 @Entity
@@ -16,7 +14,8 @@ public class Student extends Person {
     private int deskNumber;
 
     @ManyToOne
-    @JoinColumn(name = "room_id") //foreign_key for our entity table
+    @JoinColumn(name = "room_id")//foreign_key for our entity table
+    @JsonBackReference("room-student")
     private Room room;
 
     @ManyToMany
@@ -24,12 +23,18 @@ public class Student extends Person {
     private Set<Roles> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "student",cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference("student-payment")
     private List<Payment> payments = new ArrayList<>();
 
     @OneToMany(mappedBy = "reportingStudent")
-    @JsonManagedReference
+    @JsonManagedReference("student-ticket")
     private List<MaintenanceTicket> tickets = new ArrayList<>();
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("student-waitlist")
+    private List<WaitingListEntry> writingListEntries = new LinkedList<>();
+
+
 
     public Student() {}
 

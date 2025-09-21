@@ -3,6 +3,7 @@ package com.devtiro.quickstart.services;
 import com.devtiro.quickstart.entity.Room;
 import com.devtiro.quickstart.entity.Student;
 import com.devtiro.quickstart.exceptions.NoEmptySpaceException;
+import com.devtiro.quickstart.exceptions.RoomNotFoundException;
 import com.devtiro.quickstart.exceptions.StudentNotFoundException;
 import com.devtiro.quickstart.repository.RoomRepository;
 import com.devtiro.quickstart.repository.StudentRepository;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,12 +26,16 @@ public class StudentService {
     private final RoomRepository roomRepository;
     private final RoomService roomService;
     private final Logger logger = LoggerFactory.getLogger(StudentService.class);
+    private final WaitingListService waitingListService;
+    private final DormSettingsService dormSettingsService;
 
     @Autowired
-    public StudentService(StudentRepository studentRepository, RoomRepository roomRepository, RoomService roomService) {
+    public StudentService(StudentRepository studentRepository, RoomRepository roomRepository, RoomService roomService, WaitingListService waitingListService, DormSettingsService dormSettingsService) {
         this.studentRepository = studentRepository;
         this.roomRepository = roomRepository;
         this.roomService = roomService;
+        this.waitingListService = waitingListService;
+        this.dormSettingsService = dormSettingsService;
     }
 
     public Student saveStudent(Student student)
@@ -116,6 +122,33 @@ public class StudentService {
      Student currentStudent = studentRepository.findById(studentId).orElse(null);
      Room currentRoom = currentStudent.getRoom();
      return currentRoom.getFloor();
+    }
+
+    public Student assignStudentToNewRoom(Long studentId, Long roomId)
+    {
+        if(!dormSettingsService.isMaintenanceMode())
+        {
+            Student currentStudent = studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException("Couldn't find student with id: " + studentId));
+            Room currentRoom = roomRepository.findById(roomId)
+                .orElseThrow(() -> new RoomNotFoundException("Couldn't find room with id: " + roomId));
+
+            try
+            {
+                roomService.reduceRoomSpaceByOne(currentRoom.getId());
+                currentStudent.setRoom(currentRoom);
+                return studentRepository.save(currentStudent);
+
+            }
+            catch (NoEmptySpaceException e)
+            {
+                waitingListService.addStudentToWaitingList(roomId, studentId);
+                return currentStudent;
+            }
+        }
+        else
+            throw new RuntimeException("System is in maintenance mode");
+
     }
 
 

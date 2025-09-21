@@ -58,4 +58,9 @@ public class StudentController {
         return studentService.findFloorOfStudent(id);
     }
 
+    @PostMapping("/{studentId}/assing-room/{roomId}")
+    public Student assingStudentToRoom(@PathVariable Long studentId, @PathVariable Long roomId) {
+        return studentService.assignStudentToNewRoom(studentId, roomId);
+    }
+
 }

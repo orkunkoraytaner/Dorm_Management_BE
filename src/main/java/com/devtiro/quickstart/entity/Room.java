@@ -3,6 +3,7 @@ package com.devtiro.quickstart.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
+import java.util.LinkedList;
 import java.util.List;
 
 @Entity
@@ -17,11 +18,16 @@ public class Room {
     private int emptySpace;
 
     @OneToMany(mappedBy = "room")
+    @JsonManagedReference("room-student")
     private List<Student> students;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonManagedReference("room-ticket")
     private List<MaintenanceTicket> maintenanceTickets;
+
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference("room-waitlist")
+    private List<WaitingListEntry> waitingList = new LinkedList<>();
 
     public Long getId() {
         return id;
@@ -61,5 +67,29 @@ public class Room {
 
     public void setEmptySpace(int emptySpace) {
         this.emptySpace = emptySpace;
+    }
+
+    public List<WaitingListEntry> getWaitingListEntries() {
+        return waitingList;
+    }
+
+    public void setWaitingListEntries(List<WaitingListEntry> waitingListEntries) {
+        this.waitingList = waitingList;
+    }
+
+    public List<MaintenanceTicket> getMaintenanceTickets() {
+        return maintenanceTickets;
+    }
+
+    public void setMaintenanceTickets(List<MaintenanceTicket> maintenanceTickets) {
+        this.maintenanceTickets = maintenanceTickets;
+    }
+
+    public List<Student> getStudents() {
+        return students;
+    }
+
+    public void setStudents(List<Student> students) {
+        this.students = students;
     }
 }

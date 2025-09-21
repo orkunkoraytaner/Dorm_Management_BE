@@ -21,12 +21,12 @@ public class MaintenanceTicket {
 
     @ManyToOne
     @JoinColumn(name = "room_id", nullable = false)
-    @JsonBackReference
+    @JsonBackReference("room-ticket")
     private Room room;
 
     @ManyToOne
     @JoinColumn(name = "student_id")
-    @JsonBackReference
+    @JsonBackReference("student-ticket")
     private Student reportingStudent;
 
     public MaintenanceTicket() {}

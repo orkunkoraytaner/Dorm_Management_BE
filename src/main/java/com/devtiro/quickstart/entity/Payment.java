@@ -17,7 +17,7 @@ public class Payment {
 
     @ManyToOne
     @JoinColumn(name = "student_id",nullable = false)
-    @JsonBackReference
+    @JsonBackReference("student-payment")
     private Student student;
 
 

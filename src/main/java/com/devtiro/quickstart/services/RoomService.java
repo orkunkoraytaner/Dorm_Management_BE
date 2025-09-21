@@ -58,10 +58,10 @@ public class RoomService {
     {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new RoomNotFoundException("Room not found"));
-        int currentCapacity = room.getCapacity();
-        if(currentCapacity <= 0)
-            throw new NoEmptySpaceException("There is no empty space in this room");
-        room.setEmptySpace(currentCapacity - 1);
+        int emptySpace = room.getEmptySpace();
+        if(emptySpace <= 0)
+            throw new NoEmptySpaceException("There is no empty space in this room"); // everything stops after this stage
+        room.setEmptySpace(emptySpace - 1);
         return roomRepository.save(room);
     }
 
