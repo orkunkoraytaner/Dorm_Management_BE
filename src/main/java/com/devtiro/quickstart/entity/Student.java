@@ -3,6 +3,7 @@ package com.devtiro.quickstart.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.*;
 
@@ -10,7 +11,9 @@ import java.util.*;
 @Entity
 public class Student extends Person {
 
-    private String department;
+    @NotBlank(message = "Department is mandatory")
+    @Enumerated(EnumType.STRING)
+    private StudentMajor department;
     private int deskNumber;
 
     @ManyToOne
@@ -38,7 +41,7 @@ public class Student extends Person {
 
     public Student() {}
 
-    public Student(String firstname, String lastname, String email, String department, int deskNumber) {
+    public Student(String firstname, String lastname, String email, StudentMajor department, int deskNumber) {
         setFirstName(firstname); // Student class directly uses the Person class methods
         setLastName(lastname);
         setEmail(email);
@@ -60,11 +63,11 @@ public class Student extends Person {
     }
 
 
-    public String getDepartment() {
+    public StudentMajor getDepartment() {
         return department;
     }
 
-    public void setDepartment(String department) {
+    public void setDepartment(StudentMajor department) {
         this.department = department;
     }
 

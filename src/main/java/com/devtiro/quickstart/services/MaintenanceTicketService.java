@@ -4,6 +4,8 @@ import com.devtiro.quickstart.entity.MaintenanceTicket;
 import com.devtiro.quickstart.entity.Room;
 import com.devtiro.quickstart.entity.Student;
 import com.devtiro.quickstart.entity.TicketStatus;
+import com.devtiro.quickstart.exceptions.RoomNotFoundException;
+import com.devtiro.quickstart.exceptions.StudentNotFoundException;
 import com.devtiro.quickstart.repository.MaintenanceTicketRepository;
 import com.devtiro.quickstart.repository.RoomRepository;
 import com.devtiro.quickstart.repository.StudentRepository;
@@ -37,20 +39,20 @@ public class MaintenanceTicketService {
         return maintenanceTicketRepository.findByRoomId(roomId);
     }
 
-    public Optional<MaintenanceTicket> createTicket(Long roomId, Long studentId, MaintenanceTicket maintenanceTicket)
+    public MaintenanceTicket createTicket(Long studentId, MaintenanceTicket maintenanceTicket)
     {
-        Optional<Room> room = roomRepository.findById(roomId);
-        Optional<Student> optionalStudent = studentRepository.findById(studentId);
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new StudentNotFoundException("Student not found"));
+        Long roomId = student.getRoom().getId();
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new RoomNotFoundException("Room not found"));
 
-        if(room.isPresent() && optionalStudent.isPresent())
-        {
-            maintenanceTicket.setRoom(room.get());
-            maintenanceTicket.setReportingStudent(optionalStudent.get());
-            maintenanceTicket.setStatus(TicketStatus.OPEN);
-            activityLogService.addActivity(studentId,"Maintenance Ticket Created: " + maintenanceTicket.getDescription() + "for room: " + maintenanceTicket.getRoom());
-            return Optional.of(maintenanceTicketRepository.save(maintenanceTicket));
-        }
-        return Optional.empty();
+        maintenanceTicket.setRoom(room);
+        maintenanceTicket.setReportingStudent(student);
+        maintenanceTicket.setStatus(TicketStatus.OPEN);
+        activityLogService.addActivity(studentId,"Maintenance Ticket Created: " + maintenanceTicket.getDescription() + "for room: " + maintenanceTicket.getRoom());
+        return maintenanceTicketRepository.save(maintenanceTicket);
+
     }
 
     public Optional<MaintenanceTicket> updateTicketStatus(Long ticketId, TicketStatus ticketStatus)

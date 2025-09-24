@@ -1,8 +1,11 @@
 package com.devtiro.quickstart.controller;
 
 
+import com.devtiro.quickstart.dto.StudentDto;
 import com.devtiro.quickstart.entity.Student;
+import com.devtiro.quickstart.entity.StudentMajor;
 import com.devtiro.quickstart.services.StudentService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,22 +20,22 @@ public class StudentController {
     private StudentService studentService;
 
     @PostMapping
-    public Student createStudent(@RequestBody Student student) {
+    public StudentDto createStudent(@Valid @RequestBody StudentDto student) {
         return studentService.saveStudent(student);
     }
 
     @GetMapping
-    public List<Student> getAllStudents() {
+    public List<StudentDto> getAllStudents() {
         return studentService.getAllStudents();
     }
 
     @GetMapping("/{id}")
-    public Student getStudentById(@PathVariable Long id) {
+    public StudentDto getStudentById(@PathVariable Long id) {
         return studentService.getStudentById(id);
     }
 
     @PutMapping("/{id}")
-    public Student updateStudent(@PathVariable Long id, @RequestBody Student student) {
+    public StudentDto updateStudent(@PathVariable Long id, @Valid @RequestBody StudentDto student) {
         return studentService.updateStudent(id, student);
     }
     @DeleteMapping("/{id}")
@@ -40,15 +43,14 @@ public class StudentController {
         studentService.deleteStudent(id);
     }
 
-
     @GetMapping("/statistics/by-department")
-    public Map<String, Integer> getStudentCountByDepartment()
+    public Map<StudentMajor, Integer> getStudentCountByDepartment()
     {
         return studentService.countStudentByDepartment();
     }
 
     @GetMapping("/by-room/{room_id}")
-    public List<Student> getStudentsByRoom(@PathVariable Long room_id) {
+    public List<StudentDto> getStudentsByRoom(@PathVariable Long room_id) {
         return studentService.findStudentsByRoom(room_id);
     }
 
@@ -59,8 +61,11 @@ public class StudentController {
     }
 
     @PostMapping("/{studentId}/assing-room/{roomId}")
-    public Student assingStudentToRoom(@PathVariable Long studentId, @PathVariable Long roomId) {
+    public Student assignStudentToRoom(@PathVariable Long studentId, @PathVariable Long roomId) {
         return studentService.assignStudentToNewRoom(studentId, roomId);
     }
+
+
+
 
 }

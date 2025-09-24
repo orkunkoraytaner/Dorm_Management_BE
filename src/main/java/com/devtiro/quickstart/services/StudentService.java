@@ -1,7 +1,9 @@
 package com.devtiro.quickstart.services;
 
+import com.devtiro.quickstart.dto.StudentDto;
 import com.devtiro.quickstart.entity.Room;
 import com.devtiro.quickstart.entity.Student;
+import com.devtiro.quickstart.entity.StudentMajor;
 import com.devtiro.quickstart.exceptions.NoEmptySpaceException;
 import com.devtiro.quickstart.exceptions.RoomNotFoundException;
 import com.devtiro.quickstart.exceptions.StudentNotFoundException;
@@ -13,10 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.swing.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -38,51 +38,92 @@ public class StudentService {
         this.dormSettingsService = dormSettingsService;
     }
 
-    public Student saveStudent(Student student)
+    private StudentDto toDto(Student student) {
+        StudentDto dto = new StudentDto();
+        dto.setId(student.getId());
+        dto.setFirstName(student.getFirstName());
+        dto.setLastName(student.getLastName());
+        dto.setEmail(student.getEmail());
+        if (student.getDepartment() != null) {
+            dto.setDepartment(student.getDepartment().name());
+        }
+        dto.setDeskNumber(student.getDeskNumber());
+        if (student.getRoom() != null) {
+            dto.setRoomId(student.getRoom().getId());
+        }
+        return dto;
+    }
+
+    private Student toEntity(StudentDto dto) {
+        Student student = new Student();
+        student.setId(dto.getId());
+        student.setFirstName(dto.getFirstName());
+        student.setLastName(dto.getLastName());
+        student.setEmail(dto.getEmail());
+        if (dto.getDepartment() != null) {
+            student.setDepartment(StudentMajor.valueOf(dto.getDepartment()));
+        }
+        student.setDeskNumber(dto.getDeskNumber());
+        if (dto.getRoomId() != null) {
+            Room room = roomRepository.findById(dto.getRoomId())
+                    .orElseThrow(() -> new RoomNotFoundException("Couldn't find room with id: " + dto.getRoomId()));
+            student.setRoom(room);
+        }
+        return student;
+    }
+
+    public StudentDto saveStudent(StudentDto studentDto)
     {
+        Student studentEntity = toEntity(studentDto);
         try {
-            Room room = student.getRoom();
+            Room room = studentEntity.getRoom();
             roomService.reduceRoomSpaceByOne(room.getId());
-            return studentRepository.save(student);
+            Student savedStudent = studentRepository.save(studentEntity);
+            return toDto(savedStudent);
         }catch (NoEmptySpaceException e) {
             logger.error(e.getMessage());
             throw e;
         }
-
     }
 
-    public List<Student> getAllStudents()
+    public List<StudentDto> getAllStudents()
     {
-        return studentRepository.findAll();
+        List<Student> students = studentRepository.findAll();
+        List<StudentDto> newStudentDtos = new ArrayList<>();
+        for (Student student : students) {
+            StudentDto dto = toDto(student);
+            newStudentDtos.add(dto);
+        }
+        return newStudentDtos;
+
     }
 
-    public Student getStudentById(Long id) {
+    public StudentDto getStudentById(Long id) {
+        return studentRepository.findById(id)
+                .map(this::toDto)
+                .orElseThrow(() -> new StudentNotFoundException("Couldn't find student with id: " + id));
+
+    }
+
+    public StudentDto updateStudent(Long id, StudentDto studentDto)
+    {
         Optional<Student> studentOptional = studentRepository.findById(id);
-        if(studentOptional.isPresent())
-        {
-            return studentOptional.get();
-        }
-        else
-            throw new StudentNotFoundException("Couldn't find student with id: " + id);
-    }
+        if (studentOptional.isPresent()) {
+            Student studentEntity = studentOptional.get();
+            studentEntity.setFirstName(studentDto.getFirstName());
+            studentEntity.setLastName(studentDto.getLastName());
+            studentEntity.setEmail(studentDto.getEmail());
+            studentEntity.setDeskNumber(studentDto.getDeskNumber());
+            studentEntity.setDepartment(StudentMajor.valueOf(studentDto.getDepartment()));
 
-    public Student updateStudent(Long id, Student student)
-    {
-        Optional<Student> optionalStudent = studentRepository.findById(id);
-        if(optionalStudent.isPresent())
-        {
-            Student updatedStudent = optionalStudent.get();
-            updatedStudent.setFirstName(student.getFirstName());
-            updatedStudent.setLastName(student.getLastName());
-            updatedStudent.setEmail(student.getEmail());
-            updatedStudent.setDepartment(student.getDepartment());
-            updatedStudent.setDeskNumber(student.getDeskNumber());
-            return studentRepository.save(updatedStudent);
+            Student savedStudent = studentRepository.save(studentEntity);
+            return toDto(savedStudent);
         }
         else
         {
             throw new StudentNotFoundException("Couldn't find student with id: " + id);
         }
+
     }
 
     public void deleteStudent(Long id)
@@ -97,14 +138,14 @@ public class StudentService {
 
     }
 
-    public Map<String, Integer> countStudentByDepartment()
+    public Map<StudentMajor, Integer> countStudentByDepartment()
     {
         List<Student> allStudents = studentRepository.findAll();
-        Map<String, Integer> departmentCounts = new HashMap<>();
+        Map<StudentMajor, Integer> departmentCounts = new HashMap<>();
 
         for(Student student : allStudents)
         {
-            String department = student.getDepartment();
+            StudentMajor department = student.getDepartment();
             int currrentCountForDepartment = departmentCounts.getOrDefault(department, 0);
             departmentCounts.put(department, currrentCountForDepartment+1);
 
@@ -112,9 +153,16 @@ public class StudentService {
         return departmentCounts;
     }
 
-    public List<Student> findStudentsByRoom(Long roomId)
+    public List<StudentDto> findStudentsByRoom(Long roomId)
     {
-        return studentRepository.findByRoomId(roomId);
+        List<Student> studentEntity = studentRepository.findByRoomId(roomId);
+        List<StudentDto> studentDtos = new ArrayList<>();
+        for(Student student : studentEntity)
+        {
+            StudentDto dto = toDto(student);
+            studentDtos.add(dto);
+        }
+        return studentDtos;
     }
 
     public int findFloorOfStudent(Long studentId)

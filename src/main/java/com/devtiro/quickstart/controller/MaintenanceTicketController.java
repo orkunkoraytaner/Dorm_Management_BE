@@ -30,12 +30,8 @@ public class MaintenanceTicketController {
     @PostMapping
     public ResponseEntity<MaintenanceTicket> createTicketForRoom(@PathVariable Long studentId, @RequestBody MaintenanceTicket ticket)
     {
-        Student ticketStudent = studentService.getStudentById(studentId); //this controller includes a logic so this is not good
-        Room studentRoom = ticketStudent.getRoom();
-        Long roomId = studentRoom.getId();
-        return maintenanceTicketService.createTicket(roomId, studentId, ticket)
-                .map(p -> new ResponseEntity<>(p, HttpStatus.CREATED))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        MaintenanceTicket createdTicket = maintenanceTicketService.createTicket(studentId, ticket);
+        return new ResponseEntity<>(createdTicket, HttpStatus.CREATED); //koray_check
 
     }
 
