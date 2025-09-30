@@ -5,8 +5,6 @@ public class RoomDto {
     private Long id;
     private int roomNumber;
     private int capacity;
-    private int floor;
-    private int emptySpace;
 
     public Long getId() {
         return id;
@@ -32,20 +30,5 @@ public class RoomDto {
         this.capacity = capacity;
     }
 
-    public int getFloor() {
-        return floor;
-    }
-
-    public void setFloor(int floor) {
-        this.floor = floor;
-    }
-
-    public int getEmptySpace() {
-        return emptySpace;
-    }
-
-    public void setEmptySpace(int emptySpace) {
-        this.emptySpace = emptySpace;
-    }
 
 }

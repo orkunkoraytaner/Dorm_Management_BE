@@ -18,6 +18,7 @@ public class RoomService {
     @Autowired
     private RoomRepository roomRepository;
 
+
     public RoomService(RoomRepository roomRepository)
     {
         this.roomRepository = roomRepository;
@@ -36,19 +37,14 @@ public class RoomService {
         roomDto.setId(room.getId());
         roomDto.setRoomNumber(room.getRoomNumber());
         roomDto.setCapacity(room.getCapacity());
-        roomDto.setFloor(room.getFloor());
-        roomDto.setEmptySpace(room.getEmptySpace());
         return roomDto;
     }
 
     public Room dtoToEntity(RoomDto roomDto)
     {
-        Room roomEntity = new Room();
+        Room roomEntity = new Room(roomDto.getRoomNumber(), roomDto.getCapacity());
+        roomEntity.setFloor(calculateFloorFromRoomNumber(roomDto.getRoomNumber()));
         roomEntity.setId(roomDto.getId());
-        roomEntity.setRoomNumber(roomDto.getRoomNumber());
-        roomEntity.setCapacity(roomDto.getCapacity());
-        roomEntity.setFloor(roomDto.getFloor());
-        roomEntity.setEmptySpace(roomDto.getEmptySpace());
         return roomEntity;
     }
 
@@ -75,10 +71,9 @@ public class RoomService {
 
     public RoomDto updateRoom(Long id, RoomDto dtoRoom) {
         Room entityRoom = roomRepository.findById(id).orElseThrow(() -> new RoomNotFoundException("Room not found"));
-        entityRoom.setEmptySpace(dtoRoom.getEmptySpace());
         entityRoom.setRoomNumber(dtoRoom.getRoomNumber());
         entityRoom.setCapacity(dtoRoom.getCapacity());
-        entityRoom.setFloor(dtoRoom.getFloor());
+        entityRoom.setFloor(calculateFloorFromRoomNumber(dtoRoom.getRoomNumber()));
         Room updatedRoom = roomRepository.save(entityRoom);
         return entityToDto(updatedRoom);
 
@@ -99,6 +94,32 @@ public class RoomService {
             throw new NoEmptySpaceException("There is no empty space in this room"); // everything stops after this stage
         room.setEmptySpace(emptySpace - 1);
         return roomRepository.save(room);
+    }
+
+    public List<RoomDto> returnAllEmptyRooms() //this is very unefficient method because you basically fetch the whole rooms and trying to find empty ones one by one
+    {
+        List<Room> rooms = roomRepository.findAll();
+        List<RoomDto> emptyRoomDtos = new ArrayList<>();
+        for (Room room : rooms) {
+            if(room.getEmptySpace() > 0)
+            {
+                emptyRoomDtos.add(entityToDto(room));
+            }
+        }
+        return emptyRoomDtos;
+    }
+
+    public int calculateFloorFromRoomNumber(int roomNumber)
+    {
+        if(roomNumber <= 0 )
+        {
+            return 0;
+        }
+        while(roomNumber>=10)
+        {
+            roomNumber = roomNumber / 10;
+        }
+        return roomNumber;
     }
 
 

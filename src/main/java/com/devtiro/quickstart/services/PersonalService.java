@@ -46,7 +46,12 @@ public class PersonalService {
             updatedPersonal.setLastName(personal.getLastName());
             updatedPersonal.setEmail(personal.getEmail());
             updatedPersonal.setPhone(personal.getPhone());
-            return personalRepository.save(updatedPersonal);
+            if(personal.getRole() != null)
+            {
+                 updatedPersonal.setRole(personal.getRole());
+            }
+           Personal finalPersonal = personalRepository.save(updatedPersonal);
+           return finalPersonal;
         }
         else
         {

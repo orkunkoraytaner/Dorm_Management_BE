@@ -21,9 +21,9 @@ public class Student extends Person {
     @JsonBackReference("room-student")
     private Room room;
 
-    @ManyToMany
-    @JoinTable(name = "student_roles", joinColumns = @JoinColumn(name = "student_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Roles> roles = new HashSet<>();
+    @NotBlank(message = "Role assign is mandatory please choose one")
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @OneToMany(mappedBy = "student",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference("student-payment")
@@ -87,14 +87,6 @@ public class Student extends Person {
         this.room = room;
     }
 
-    public Set<Roles> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Roles> roles) {
-        this.roles = roles;
-    }
-
     public List<Payment> getPayments() {
         return payments;
     }
@@ -103,6 +95,27 @@ public class Student extends Person {
         this.payments = payments;
     }
 
+    public @NotBlank(message = "Role assign is mandatory please choose one") Role getRole() {
+        return role;
+    }
 
+    public void setRole(@NotBlank(message = "Role assign is mandatory please choose one") Role role) {
+        this.role = role;
+    }
 
+    public List<MaintenanceTicket> getTickets() {
+        return tickets;
+    }
+
+    public void setTickets(List<MaintenanceTicket> tickets) {
+        this.tickets = tickets;
+    }
+
+    public List<WaitingListEntry> getWritingListEntries() {
+        return writingListEntries;
+    }
+
+    public void setWritingListEntries(List<WaitingListEntry> writingListEntries) {
+        this.writingListEntries = writingListEntries;
+    }
 }

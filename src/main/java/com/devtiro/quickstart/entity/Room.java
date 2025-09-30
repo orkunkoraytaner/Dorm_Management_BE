@@ -29,6 +29,16 @@ public class Room {
     @JsonManagedReference("room-waitlist")
     private List<WaitingListEntry> waitingList = new LinkedList<>();
 
+    public Room() {}
+
+    public Room(int roomNumber, int capacity)
+    {
+        this.roomNumber = roomNumber;
+        this.capacity = capacity;
+        this.emptySpace = capacity;
+
+    }
+
     public Long getId() {
         return id;
     }

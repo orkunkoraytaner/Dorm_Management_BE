@@ -1,9 +1,7 @@
 package com.devtiro.quickstart.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -23,9 +21,9 @@ public class Personal extends Person {
         this.phone = phone;
     }
 
-    @ManyToMany
-    @JoinTable(name = "personal_roles", joinColumns = @JoinColumn(name = "personal_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Roles> roles = new HashSet<>();
+    @NotBlank(message = "Choose a role please")
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Override
     public String toString() {
@@ -46,4 +44,11 @@ public class Personal extends Person {
         this.phone = phone;
     }
 
+    public @NotBlank(message = "Choose a role please") Role getRole() {
+        return role;
+    }
+
+    public void setRole(@NotBlank(message = "Choose a role please") Role role) {
+        this.role = role;
+    }
 }

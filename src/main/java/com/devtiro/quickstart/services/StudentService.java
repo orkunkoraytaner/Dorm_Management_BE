@@ -1,6 +1,7 @@
 package com.devtiro.quickstart.services;
 
 import com.devtiro.quickstart.dto.StudentDto;
+import com.devtiro.quickstart.entity.Role;
 import com.devtiro.quickstart.entity.Room;
 import com.devtiro.quickstart.entity.Student;
 import com.devtiro.quickstart.entity.StudentMajor;
@@ -51,6 +52,10 @@ public class StudentService {
         if (student.getRoom() != null) {
             dto.setRoomId(student.getRoom().getId());
         }
+        if(student.getRole() != null)
+        {
+            dto.setRole(student.getRole().name());
+        }
         return dto;
     }
 
@@ -68,6 +73,10 @@ public class StudentService {
             Room room = roomRepository.findById(dto.getRoomId())
                     .orElseThrow(() -> new RoomNotFoundException("Couldn't find room with id: " + dto.getRoomId()));
             student.setRoom(room);
+        }
+        if(dto.getRole() != null)
+        {
+            student.setRole(Role.valueOf(dto.getRole()));
         }
         return student;
     }
@@ -115,6 +124,10 @@ public class StudentService {
             studentEntity.setEmail(studentDto.getEmail());
             studentEntity.setDeskNumber(studentDto.getDeskNumber());
             studentEntity.setDepartment(StudentMajor.valueOf(studentDto.getDepartment()));
+            if(studentDto.getRole() != null)
+            {
+                studentEntity.setRole(Role.valueOf(studentDto.getRole()));
+            }
 
             Student savedStudent = studentRepository.save(studentEntity);
             return toDto(savedStudent);

@@ -9,6 +9,7 @@ public class StudentDto {
     private String department;
     private int deskNumber;
     private Long roomId;
+    private String role;
 
 
     public Long getId() {
@@ -65,5 +66,13 @@ public class StudentDto {
 
     public void setRoomId(Long roomId) {
         this.roomId = roomId;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
