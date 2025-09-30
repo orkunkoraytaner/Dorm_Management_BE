@@ -41,7 +41,7 @@ This project is a comprehensive Spring Boot REST API for managing a student dorm
 
 1.  **Clone the Repository**:
     ```bash
-    git clone <your-repository-url>
+    git clone https://github.com/orkunkoraytaner/Dorm_Management_BE.git
     ```
 2.  **Navigate to the Project Directory**:
     ```bash
